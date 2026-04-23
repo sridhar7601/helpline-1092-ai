@@ -1,0 +1,44 @@
+---
+title: Theme 12 — SahayakAI (1092 Helpline Intake)
+---
+flowchart TB
+    subgraph Caller["CALLER (any language)"]
+      VOICE["Speech Input<br/>Kannada · Hindi · English<br/>Marathi · Telugu"]
+    end
+    subgraph Intake["LIVE INTAKE PIPELINE"]
+      ASR["Web Speech Recognition"]
+      PII["PII Redactor<br/>(names · phones · addresses · schools)"]
+      CLASSIFY["AI Classifier<br/>• Intent (10 categories)<br/>• Urgency (4 levels)<br/>• Flags (minor · weapon · etc.)"]
+      QGEN["Suggested Questions<br/>(intent-driven prompts for operator)"]
+    end
+    subgraph Verify["OPERATOR VERIFICATION"]
+      SUMMARY["Auto-generated Case Brief"]
+      OVERRIDE["Operator Override<br/>(intent · urgency · dispatch)"]
+      REASON["Reasoning + Confidence Displayed"]
+    end
+    subgraph Dispatch["DISPATCH REGISTRY"]
+      POLICE["Police Station"]
+      CWC["Child Welfare"]
+      MEDICAL["Medical"]
+      WPO["Women Protection Officer"]
+      MH["Mental Health Care"]
+    end
+    AUDIT["Full Audit Trail<br/>Turns · Redactions · Classifications · Overrides · Dispatches"]
+    VOICE --> ASR --> PII --> CLASSIFY
+    CLASSIFY --> QGEN
+    QGEN -.-> ASR
+    CLASSIFY --> SUMMARY
+    SUMMARY --> OVERRIDE
+    REASON --> OVERRIDE
+    OVERRIDE --> POLICE & CWC & MEDICAL & WPO & MH
+    PII & CLASSIFY & OVERRIDE --> AUDIT
+    classDef caller fill:#fae8ff,stroke:#a21caf,color:#4a044e
+    classDef intake fill:#c026d3,stroke:#86198f,color:#fff
+    classDef verify fill:#d946ef,stroke:#a21caf,color:#fff
+    classDef dispatch fill:#f5d0fe,stroke:#a21caf,color:#4a044e
+    classDef audit fill:#fdf4ff,stroke:#a21caf,color:#4a044e
+    class VOICE caller
+    class ASR,PII,CLASSIFY,QGEN intake
+    class SUMMARY,OVERRIDE,REASON verify
+    class POLICE,CWC,MEDICAL,WPO,MH dispatch
+    class AUDIT audit

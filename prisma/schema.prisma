@@ -1,0 +1,62 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Case {
+  id                 String   @id @default(cuid())
+  caseNumber         String   @unique
+  callerPseudonym    String
+  language           String
+  intent             String?
+  urgency            String?
+  confidence         Float?
+  dispatchDept       String?
+  dispatchReason     String?
+  reasoning          String?
+  summary            String?
+  verified           Boolean  @default(false)
+  verifierNotes      String?
+  verifiedAt         DateTime?
+  status             String   @default("INTAKE_IN_PROGRESS")
+  createdAt          DateTime @default(now())
+  turns              Turn[]
+  flags              CaseFlag[]
+  dispatches         Dispatch[]
+}
+
+model Turn {
+  id           String   @id @default(cuid())
+  caseId       String
+  role         String
+  language     String
+  rawText      String
+  redactedText String
+  piiFlags     String?
+  intent       String?
+  timestamp    DateTime @default(now())
+  case         Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+}
+
+model CaseFlag {
+  id      String @id @default(cuid())
+  caseId  String
+  label   String
+  details String?
+  case    Case   @relation(fields: [caseId], references: [id], onDelete: Cascade)
+}
+
+model Dispatch {
+  id           String   @id @default(cuid())
+  caseId       String
+  department   String
+  contactInfo  String
+  dispatchedAt DateTime @default(now())
+  acknowledged Boolean  @default(false)
+  ackTime      DateTime?
+  case         Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+}
