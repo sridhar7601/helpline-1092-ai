@@ -1,13 +1,16 @@
 # SahayakAI — 1092 Helpline Intake
 
-AI-assisted intake for India’s **1092** women and child distress helpline: browser **Web Speech API** (Kannada, Hindi, English, Marathi, Telugu), **mock** intent and urgency classification with explainable reasoning, **PII redaction** on transcripts, and a **synthetic dispatch registry** for Bengaluru-style routing. Operators **verify before dispatch** — no silent routing.
+AI-assisted intake for the 1092 helpline: transcribe, classify urgency, redact PII, and route to the right department with full explainability.
 
 > **PanIIT AI for Bharat Hackathon** — Theme 12: AI for 1092 Helpline
 
-## Quick start
+SahayakAI is an operator console for India's 1092 women and child distress helpline. It captures multilingual speech in the browser, stores raw and redacted transcripts, runs mock-first intent and urgency classification with explainable reasoning, proposes synthetic dispatch targets, and requires an operator verification step before any dispatch is created.
+
+## Quick Start
 
 ```bash
-cd theme12-helpline-1092
+git clone https://github.com/sridhar7601/helpline-1092-ai.git
+cd helpline-1092-ai
 cp .env.example .env
 npm install
 npx prisma generate
@@ -16,52 +19,57 @@ npm run seed
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). Use **Start new call** for live intake (Chrome recommended for speech).
+Open [http://localhost:3000](http://localhost:3000). Use `Start new call` for live intake in a Chromium-based browser.
 
-## Demo data
+## Demo Data
 
-- `npm run seed` — clears cases and inserts **30** synthetic cases (mixed intents, 5 stamped with today’s date, one low-confidence mental-health case, one operator-override note in verifier notes).
-- Deterministic generator uses **Faker seed 42**.
+`npm run seed` clears existing cases and inserts 30 deterministic synthetic cases with mixed intents, urgency levels, verifier notes, and dispatch-ready examples.
 
 ## Architecture
 
-See [docs/diagrams/architecture.png](docs/diagrams/architecture.png) (and `.svg` / `.mmd` sources). Regenerate with:
+Browser speech intake feeds transcript storage, PII redaction, explainable case classification, synthetic dispatch proposal, and operator verification before dispatch.
 
-```bash
-npx --yes @mermaid-js/mermaid-cli -i docs/diagrams/architecture.mmd -o docs/diagrams/architecture.png -w 2400 -H 1800 -b white
-npx --yes @mermaid-js/mermaid-cli -i docs/diagrams/architecture.mmd -o docs/diagrams/architecture.svg -b white
-```
+![Architecture](docs/diagrams/architecture.png)
 
-**Note:** SQLite stores categorical fields as strings (same values as the brief’s enums) because this Prisma + SQLite toolchain validates enums inconsistently; application types live in `lib/enums.ts`.
+## Tech Stack
 
-## Tech stack
+- Next.js App Router + TypeScript
+- Prisma + SQLite
+- Tailwind CSS + shadcn-style UI primitives + Tremor charts
+- Web Speech API in `lib/speech.ts`
+- Mock-first AI classification in `lib/ai.ts`
+- Synthetic dispatch registry in `lib/dispatch-registry.ts`
 
-- Next.js (App Router) + TypeScript  
-- Prisma + SQLite  
-- Tailwind CSS v3 + shadcn-style UI primitives  
-- Tremor charts (dashboard donut)  
-- Web Speech API (`lib/speech.ts`)  
-- Mock AI behind `USE_MOCK_AI` (`lib/ai.ts`)
+## Demo Flow
+
+1. Open the dashboard and click `Start new call`.
+2. Speak a sample complaint and show the live multilingual transcript capture.
+3. Review the redacted transcript, predicted intent, urgency, confidence, reasoning, and follow-up prompts.
+4. Finalize the case and show the operator verification step with notes.
+5. Dispatch the verified case to a suggested synthetic department and review the resulting audit trail.
+
+## Key Features
+
+- Multilingual browser-based speech intake for helpline operators.
+- PII redaction on transcripts before downstream review.
+- Explainable mock-first classification for intent, urgency, confidence, and risk flags.
+- Synthetic dispatch registry that can be extended as routing targets evolve.
+- Mandatory human verification before dispatch so the system never routes silently.
 
 ## Documentation
 
-Full write-up: [docs/solution-document.md](docs/solution-document.md) · PDF: [docs/solution-document.pdf](docs/solution-document.pdf)
+[docs/solution-document.md](docs/solution-document.md) · [PDF](docs/solution-document.pdf)
 
-## API (summary)
+## Verification
 
-| Method | Path | Purpose |
-|--------|------|---------|
-| POST | `/api/cases/start` | New intake case |
-| POST | `/api/cases/[id]/turn` | Caller/agent turn + classification on caller |
-| POST | `/api/cases/[id]/finalize` | Summary + pending verification |
-| PUT | `/api/cases/[id]/verify` | Operator overrides + verified flag |
-| POST | `/api/cases/[id]/dispatch` | Create dispatch rows + DISPATCHED |
-| POST | `/api/cases/[id]/escalate` | ESCALATED |
-| GET | `/api/cases` | List `{ total, cases }` |
-| GET | `/api/cases/[id]` | Case + turns + flags + dispatches + recomputed `proposal` |
-| GET | `/api/dashboard/overview` | JSON metrics (also mirrored on home page via Prisma) |
-| GET | `/api/dashboard/heatmap` | Intent × urgency matrix |
+```bash
+npm install
+npx tsc --noEmit
+npm run build
+npm run seed
+npm run dev
+```
 
-## Verification gates
+## License
 
-From this directory: `npm install` → `npm run build` → `npx tsc --noEmit` → `npm run seed` → `npm run dev` (landing page loads).
+Hackathon submission
