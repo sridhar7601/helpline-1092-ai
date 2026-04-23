@@ -32,3 +32,15 @@ Prisma + SQLite: `Case`, `Turn`, `CaseFlag`, `Dispatch` — enums for `Language`
 ## How to run
 
 See [README.md](../README.md) in the repository root for this theme.
+
+## Regenerating the PDF
+
+From the theme root (with [pandoc](https://pandoc.org/) and Google Chrome installed):
+
+```bash
+pandoc docs/solution-document.md -o /tmp/sahayakai-solution.html --standalone --metadata title="SahayakAI Theme 12"
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu --no-pdf-header-footer \
+  --print-to-pdf="$(pwd)/docs/solution-document.pdf" "file:///tmp/sahayakai-solution.html"
+```
+
+Adjust the Chrome path on Linux or Windows as needed.
