@@ -86,7 +86,6 @@ export default async function DashboardPage() {
               AI-assisted intake for India&apos;s 1092 helpline — voice in Kannada, Hindi, English, Marathi, and
               Telugu; mock classification; PII redaction; dispatch registry. Operator-in-the-loop by design.
             </p>
-            <p className="text-xs text-fuchsia-600 mt-2 font-medium">PanIIT AI for Bharat — Theme 12</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Link href="/cases">
