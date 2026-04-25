@@ -6,6 +6,15 @@ module.exports = {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './lib/**/*.{ts,tsx}',
+    './node_modules/@tremor/**/*.{js,ts,jsx,tsx}',
+  ],
+  safelist: [
+    {
+      pattern:
+        /^(bg|text|border|stroke|fill|ring|shadow|outline)-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900|950)$/,
+      variants: ['hover', 'ui-selected'],
+    },
+    { pattern: /^(bg|text|border)-tremor-(brand|content|background|border|ring)/ },
   ],
   theme: {
     extend: {
